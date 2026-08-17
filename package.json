@@ -1,0 +1,15 @@
+{
+  "name": "sas",
+  "version": "1.0.0",
+  "description": "sas control access",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "mohammadnjt",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
