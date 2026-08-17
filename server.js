@@ -18,8 +18,8 @@ const logDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
 
 app.use(express.json());
-app.use(express.static(publicDir));
-
+app.use(express.static(publicDir)); // دسترسی مستقیم (مثلاً /logo.png)
+app.use('/public', express.static(publicDir)); // دسترسی با پیشوند (مثلاً /public/logo.png)
 // ==========================================
 // 🛡️ دیتابیس و مموری‌های موقت
 // ==========================================
