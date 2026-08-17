@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل کنترل تردد SAS</title>
+<style>
+    :root{
+        --bg:#0b1120; --card:#141b2d; --card2:#0f1626; --border:#243049;
+        --text:#e5e9f2; --muted:#8894ab;
+        --blue:#3b82f6; --green:#22c55e; --red:#ef4444; --yellow:#eab308; --purple:#a855f7;
+    }
+    *{box-sizing:border-box;}
+    body{
+        font-family:'Segoe UI', Tahoma, sans-serif; background:var(--bg); color:var(--text);
+        margin:0; padding:24px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:22px;
+    }
+    .wrap{width:100%; max-width:900px; display:flex; flex-direction:column; gap:22px;}
+    .page-title{text-align:center; margin:0 0 4px;}
+    .page-title h1{font-size:22px; margin:0; color:#fff;}
+    .page-title p{color:var(--muted); font-size:13px; margin:4px 0 0;}
+
+    .card{
+        background:var(--card); border:1px solid var(--border); border-radius:14px;
+        padding:22px 22px 24px; box-shadow:0 6px 24px rgba(0,0,0,.35);
+    }
+    .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;}
+    .card-head h2{margin:0; font-size:17px; display:flex; align-items:center; gap:8px;}
+    .card-head .hint{color:var(--muted); font-size:12.5px;}
+
+    /* ---- action bit builder ---- */
+    .bits{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0;}
+    .bit{
+        background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:12px 8px;
+        display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; user-select:none;
+        text-align:center; font-size:12.5px; font-weight:600; transition:.15s;
+    }
+    .bit input{transform:scale(1.25); accent-color:var(--blue);}
+    .bit small{color:var(--muted); font-weight:400; font-size:11px;}
+    .bit.on{border-color:var(--blue); background:rgba(59,130,246,.12);}
+    .code-preview{
+        direction:ltr; text-align:center; font-family:'Consolas',monospace; font-size:20px; letter-spacing:6px;
+        background:var(--card2); border:1px dashed var(--border); border-radius:10px; padding:8px; margin-bottom:14px; color:#93c5fd;
+    }
+
+    input[type="text"], select{
+        width:100%; padding:11px 12px; border-radius:9px; border:1px solid var(--border);
+        background:var(--card2); color:var(--text); font-size:14px;
+    }
+    input[type="text"]:focus, select:focus{outline:none; border-color:var(--blue);}
+    label.field{display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; font-weight:600;}
+    .field-group{margin-bottom:14px;}
+    .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+
+    .status-toggle{display:flex; gap:10px; margin-bottom:14px;}
+    .status-toggle button{
+        flex:1; padding:11px; border-radius:9px; border:1px solid var(--border); background:var(--card2);
+        color:var(--muted); font-weight:700; cursor:pointer; font-size:13.5px; transition:.15s;
+    }
+    .status-toggle button.active[data-v="allowed"]{background:rgba(34,197,94,.15); border-color:var(--green); color:#4ade80;}
+    .status-toggle button.active[data-v="rejected"]{background:rgba(239,68,68,.15); border-color:var(--red); color:#f87171;}
+
+    .btn{
+        width:100%; padding:12px; background:var(--blue); color:#fff; border:none; border-radius:10px;
+        font-size:14.5px; font-weight:700; cursor:pointer; margin-top:6px; transition:.15s;
+    }
+    .btn:hover{filter:brightness(1.1);}
+    .btn-green{background:var(--green);}
+    .btn-danger{background:var(--red);}
+    .btn-outline{background:transparent; border:1px solid var(--border); color:var(--text); font-weight:600;}
+    .btn-sm{width:auto; padding:6px 12px; font-size:12px; margin:0;}
+
+    table{width:100%; border-collapse:collapse; font-size:13.5px;}
+    th, td{padding:10px 8px; border-bottom:1px solid var(--border); text-align:right; vertical-align:middle;}
+    th{color:var(--muted); font-weight:600; font-size:12px;}
+    td.mono, .mono{font-family:'Consolas',monospace; direction:ltr; text-align:left; color:#93c5fd;}
+
+    .badge{padding:4px 9px; border-radius:6px; font-weight:700; font-family:'Consolas',monospace; font-size:11.5px; direction:ltr; display:inline-block;}
+    .b-allowed{background:rgba(34,197,94,.18); color:#4ade80;}
+    .b-rejected{background:rgba(239,68,68,.18); color:#f87171;}
+    .b-unknown{background:rgba(148,163,184,.18); color:#cbd5e1;}
+    .b-antipassback{background:rgba(234,179,8,.18); color:#fde047;}
+    .b-test{background:rgba(168,85,247,.18); color:#c084fc;}
+
+    .empty{text-align:center; color:var(--muted); padding:18px 0; font-size:13px;}
+    .actions-cell{display:flex; gap:6px; flex-wrap:wrap;}
+    .status-msg{text-align:center; margin-top:12px; color:#fbbf24; font-size:13.5px; min-height:18px;}
+    .time-cell{color:var(--muted); font-size:11.5px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="page-title">
+        <h1>🛡️ پنل کنترل تردد SAS</h1>
+        <p>مانیتورینگ زنده، مدیریت کارت‌ها و تست سخت‌افزار دستگاه کنترل تردد</p>
+    </div>
+
+    <!-- ==================== لاگ زنده ==================== -->
+    <div class="card">
+        <div class="card-head">
+            <h2>📡 لاگ زنده تردد</h2>
+            <span class="hint">هر ۲ ثانیه به‌روزرسانی می‌شود — کارت‌های ناشناس هم اینجا دیده می‌شوند</span>
+        </div>
+        <table>
+            <thead>
+                <tr><th>زمان</th><th>UID</th><th>پیام</th><th>وضعیت</th><th>اکشن</th><th></th></tr>
+            </thead>
+            <tbody id="logTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- ==================== مدیریت کارت‌ها ==================== -->
+    <div class="card" id="cardFormSection">
+        <div class="card-head">
+            <h2>🪪 دیتابیس کارت‌ها</h2>
+            <span class="hint">افزودن دائمی کارت به دیتابیس</span>
+        </div>
+
+        <div class="field-group">
+            <label class="field">UID کارت</label>
+            <input type="text" id="cardUid" placeholder="e.g. 47:35:35:02" class="mono">
+        </div>
+
+        <label class="field">نوع دسترسی</label>
+        <div class="status-toggle" id="statusToggle">
+            <button type="button" data-v="allowed" class="active" onclick="setStatus('allowed')">✅ مجاز</button>
+            <button type="button" data-v="rejected" onclick="setStatus('rejected')">⛔ مسدود</button>
+        </div>
+
+        <label class="field">اکشن مربوط به این کارت (رله / بازر / چراغ قرمز / چراغ سبز)</label>
+        <div class="bits" id="cardBits">
+            <label class="bit" data-bit="relay"><input type="checkbox" id="cardRelay" onchange="updateCardCode()"> 🔵 رله <small>در</small></label>
+            <label class="bit" data-bit="buzzer"><input type="checkbox" id="cardBuzzer" onchange="updateCardCode()"> 🟡 بازر <small>بوق</small></label>
+            <label class="bit" data-bit="red"><input type="checkbox" id="cardRed" onchange="updateCardCode()"> 🔴 چراغ قرمز</label>
+            <label class="bit" data-bit="green"><input type="checkbox" id="cardGreen" onchange="updateCardCode()"> 🟢 چراغ سبز</label>
+        </div>
+        <div class="code-preview" id="cardCodePreview">0000</div>
+
+        <div class="field-group">
+            <label class="field">پیام روی LCD (حداکثر ۱۶ کاراکتر)</label>
+            <input type="text" id="cardMsg" maxlength="16" placeholder="مثلاً: خوش اومدی!">
+        </div>
+
+        <button class="btn btn-green" onclick="saveCard()">💾 ذخیره کارت در دیتابیس</button>
+        <div class="status-msg" id="cardStatusMsg"></div>
+
+        <h3 style="margin-top:26px; border-bottom:1px solid var(--border); padding-bottom:10px; font-size:15px;">کارت‌های ثبت‌شده</h3>
+        <table>
+            <thead><tr><th>UID</th><th>وضعیت</th><th>اکشن</th><th>پیام</th><th></th></tr></thead>
+            <tbody id="cardsTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- ==================== تست دستی سخت‌افزار ==================== -->
+    <div class="card">
+        <div class="card-head">
+            <h2>🛠️ تست یک‌باره سخت‌افزار</h2>
+            <span class="hint">فقط روی کارت بعدی که خونده بشه اجرا می‌شود</span>
+        </div>
+        <div class="bits">
+            <label class="bit" data-bit="relay"><input type="checkbox" id="relay" onchange="paintBits('relay')"> 🔵 رله <small>در</small></label>
+            <label class="bit" data-bit="buzzer"><input type="checkbox" id="buzzer" onchange="paintBits('buzzer')"> 🟡 بازر <small>بوق</small></label>
+            <label class="bit" data-bit="red"><input type="checkbox" id="red" onchange="paintBits('red')"> 🔴 چراغ قرمز</label>
+            <label class="bit" data-bit="green"><input type="checkbox" id="green" onchange="paintBits('green')"> 🟢 چراغ سبز</label>
+        </div>
+        <input type="text" id="msg" maxlength="16" placeholder="پیام LCD (حداکثر ۱۶ کاراکتر)">
+        <button class="btn" onclick="setTestMode()">🚀 ثبت اکشن بعدی (یک‌بار مصرف)</button>
+        <div class="status-msg" id="status"></div>
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // helpers
+    // ============================================================
+    function fmtTime(t){ return new Date(t).toLocaleTimeString('fa-IR'); }
+    function typeBadge(type){
+        const map = {
+            allowed:'b-allowed', rejected:'b-rejected', unknown:'b-unknown',
+            antipassback:'b-antipassback', test:'b-test'
+        };
+        const label = {
+            allowed:'مجاز', rejected:'مسدود', unknown:'ناشناس',
+            antipassback:'تکراری', test:'تست'
+        };
+        return `<span class="badge ${map[type]||'b-unknown'}">${label[type]||type}</span>`;
+    }
+
+    function paintBits(prefix){
+        document.querySelectorAll(`.bit`).forEach(b=>{});
+    }
+    // پررنگ کردن چک‌باکس‌های فعال (هم برای تست و هم برای فرم کارت)
+    function refreshBitStyles(containerIds){
+        containerIds.forEach(id=>{
+            const cb = document.getElementById(id);
+            if(cb) cb.closest('.bit').classList.toggle('on', cb.checked);
+        });
+    }
+    ['relay','buzzer','red','green'].forEach(id=>{
+        document.addEventListener('change', e=>{
+            if(e.target && (e.target.id===id)) refreshBitStyles(['relay','buzzer','red','green']);
+        });
+    });
+    ['cardRelay','cardBuzzer','cardRed','cardGreen'].forEach(id=>{
+        document.addEventListener('change', e=>{
+            if(e.target && (e.target.id===id)) refreshBitStyles(['cardRelay','cardBuzzer','cardRed','cardGreen']);
+        });
+    });
+
+    // ============================================================
+    // Test Panel (one-time action)
+    // ============================================================
+    function setTestMode() {
+        const actionCode = (document.getElementById('relay').checked?'1':'0') +
+                           (document.getElementById('buzzer').checked?'1':'0') +
+                           (document.getElementById('red').checked?'1':'0') +
+                           (document.getElementById('green').checked?'1':'0');
+        const msg = document.getElementById('msg').value || "Test Mode OK";
+
+        fetch('/api/test-mode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: actionCode, message: msg })
+        }).then(res => res.json()).then(() => {
+            const el = document.getElementById('status');
+            el.innerText = '✅ حالت تست فعال شد! یک کارت بکشید.';
+            setTimeout(() => el.innerText = '', 5000);
+        });
+    }
+
+    // ============================================================
+    // Live Logs
+    // ============================================================
+    function fetchLogs() {
+        fetch('/api/live-logs').then(res => res.json()).then(logs => {
+            const tbody = document.getElementById('logTableBody');
+            if(logs.length === 0){
+                tbody.innerHTML = `<tr><td colspan="6" class="empty">هنوز هیچ کارتی خوانده نشده.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            logs.forEach(log => {
+                const quickAdd = (log.type === 'unknown' && !log.registered) ? `
+                    <div class="actions-cell">
+                        <button class="btn btn-green btn-sm" onclick="quickAdd('${log.uid}','allowed')">✅ مجاز</button>
+                        <button class="btn btn-danger btn-sm" onclick="quickAdd('${log.uid}','rejected')">⛔ مسدود</button>
+                    </div>` : '';
+                tbody.innerHTML += `<tr>
+                    <td class="time-cell">${log.shamsi}<br>${fmtTime(log.time)}</td>
+                    <td class="mono">${log.uid}</td>
+                    <td>${log.msg}</td>
+                    <td>${typeBadge(log.type)}</td>
+                    <td><span class="badge b-unknown mono">${log.action}</span></td>
+                    <td>${quickAdd}</td>
+                </tr>`;
+            });
+        });
+    }
+    setInterval(fetchLogs, 2000);
+    fetchLogs();
+
+    // پرکردن سریع فرم از روی یک لاگ ناشناس، به‌جای کپی-پیست دستی UID
+    function quickAdd(uid, status){
+        document.getElementById('cardUid').value = uid;
+        setStatus(status);
+        document.getElementById('cardFormSection').scrollIntoView({behavior:'smooth', block:'start'});
+        document.getElementById('cardMsg').focus();
+    }
+
+    // ============================================================
+    // Card Database (Allowed / Rejected + action builder)
+    // ============================================================
+    let currentStatus = 'allowed';
+    function setStatus(v){
+        currentStatus = v;
+        document.querySelectorAll('#statusToggle button').forEach(b=>{
+            b.classList.toggle('active', b.dataset.v === v);
+        });
+    }
+
+    function updateCardCode(){
+        const code = (document.getElementById('cardRelay').checked?'1':'0') +
+                     (document.getElementById('cardBuzzer').checked?'1':'0') +
+                     (document.getElementById('cardRed').checked?'1':'0') +
+                     (document.getElementById('cardGreen').checked?'1':'0');
+        document.getElementById('cardCodePreview').innerText = code;
+        return code;
+    }
+
+    function fetchCards() {
+        fetch('/api/cards').then(res => res.json()).then(cards => {
+            const tbody = document.getElementById('cardsTableBody');
+            const entries = Object.entries(cards);
+            if(entries.length === 0){
+                tbody.innerHTML = `<tr><td colspan="5" class="empty">هنوز کارتی ثبت نشده.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            for (const [uid, info] of entries) {
+                tbody.innerHTML += `<tr>
+                    <td class="mono">${uid}</td>
+                    <td>${typeBadge(info.status)}</td>
+                    <td><span class="badge b-unknown mono">${info.action}</span></td>
+                    <td>${info.msg || ''}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteCard('${uid}')">🗑️ حذف</button></td>
+                </tr>`;
+            }
+        });
+    }
+
+    function saveCard() {
+        const uid = document.getElementById('cardUid').value.trim();
+        const action = updateCardCode();
+        const msg = document.getElementById('cardMsg').value;
+        const el = document.getElementById('cardStatusMsg');
+
+        if(!uid){ el.innerText = '⚠️ UID را وارد کنید.'; return; }
+
+        fetch('/api/cards', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ uid, status: currentStatus, action, msg })
+        }).then(res => res.json()).then(() => {
+            el.innerText = `✅ کارت ${uid} به‌عنوان ${currentStatus === 'allowed' ? 'Allowed' : 'Rejected'} ذخیره شد.`;
+            document.getElementById('cardUid').value = '';
+            document.getElementById('cardMsg').value = '';
+            fetchCards();
+            setTimeout(()=> el.innerText = '', 4000);
+        });
+    }
+
+    function deleteCard(uid) {
+        if(confirm(`آیا از حذف کارت ${uid} مطمئن هستید؟`)) {
+            fetch(`/api/cards/${uid}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(() => fetchCards());
+        }
+    }
+
+    fetchCards();
+    updateCardCode();
+</script>
+</body>
+</html>

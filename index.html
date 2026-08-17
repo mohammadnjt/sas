@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SAS | مستندات سیستم کنترل دسترسی هوشمند</title>
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #f8faff;
+            color: #1e293b;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: white;
+            border-radius: 20px;
+            padding: 16px 28px;
+            box-shadow: 0 4px 20px rgba(0, 40, 100, 0.06);
+            border: 1px solid #e2edff;
+            margin-bottom: 28px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-area img {
+            height: 48px;
+            width: auto;
+            display: block;
+        }
+        .logo-area h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0a2a4a;
+            letter-spacing: -0.3px;
+        }
+        .logo-area h1 small {
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: #3b6a9a;
+            margin-right: 10px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .gh-link {
+            background: #0a2a4a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .gh-link:hover {
+            background: #1a4a7a;
+            transform: translateY(-1px);
+        }
+        .version-badge {
+            background: #e6f0ff;
+            color: #1a4a7a;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 60px;
+            box-shadow: 0 2px 12px rgba(0, 40, 100, 0.05);
+            border: 1px solid #e2edff;
+            margin-bottom: 32px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #4a5a7a;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .tab-btn:hover {
+            background: #eef5ff;
+            color: #0a2a4a;
+        }
+        .tab-btn.active {
+            background: #0a2a4a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(10, 42, 74, 0.15);
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 36px;
+            box-shadow: 0 4px 24px rgba(0, 40, 100, 0.04);
+            border: 1px solid #e2edff;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0a2a4a;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #d6e6ff;
+            padding-bottom: 12px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a3a5a;
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2a4a6a;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        p {
+            margin-bottom: 14px;
+            color: #1e293b;
+        }
+        ul, ol {
+            padding-right: 28px;
+            margin-bottom: 16px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        code {
+            background: #eef5ff;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #0a2a4a;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #d6e6ff;
+        }
+        pre {
+            background: #f4f9ff;
+            padding: 18px 22px;
+            border-radius: 16px;
+            border: 1px solid #d6e6ff;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #0a2a4a;
+            margin: 18px 0;
+        }
+        pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            color: inherit;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 16px;
+            border: 1px solid #d6e6ff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+        }
+        th {
+            background: #e6f0ff;
+            color: #0a2a4a;
+            padding: 12px 16px;
+            text-align: right;
+            border-bottom: 2px solid #b8d0f0;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e6edf6;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .highlight-box {
+            background: #f0f7ff;
+            border-right: 5px solid #2d7a4a;
+            padding: 16px 22px;
+            border-radius: 12px;
+            margin: 18px 0;
+            color: #1e293b;
+        }
+        .highlight-box strong {
+            color: #0a4a2a;
+        }
+        .highlight-box.warn {
+            background: #fff8ec;
+            border-right-color: #c8871a;
+        }
+        .highlight-box.warn strong {
+            color: #8a5a0a;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 18px 0;
+        }
+        .feature-item {
+            background: #f8fbff;
+            border: 1px solid #e2edff;
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: center;
+        }
+        .feature-item .icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .feature-item h4 {
+            margin-top: 0;
+            font-size: 1rem;
+        }
+        .feature-item p {
+            font-size: 0.9rem;
+            color: #3a5a7a;
+            margin-bottom: 0;
+        }
+
+        .footer {
+            margin-top: 48px;
+            padding-top: 20px;
+            border-top: 1px solid #e2edff;
+            text-align: center;
+            color: #5a7a9a;
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: #0a2a4a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 12px 12px 30px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .logo-area h1 {
+                font-size: 1.3rem;
+            }
+            .tabs {
+                border-radius: 20px;
+                padding: 6px 8px;
+                gap: 4px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            .tab-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            .content-card {
+                padding: 20px 16px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Image gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 8px;
+        }
+        .gallery-item {
+            background: #f8fbff;
+            border: 1px solid #e2edff;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            background: #eef5ff;
+        }
+        .gallery-item .caption {
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: #3a5a7a;
+            text-align: center;
+            word-break: break-all;
+        }
+        .gallery-empty {
+            text-align: center;
+            color: #7a92ad;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-area">
+            <img src="/public/logo.png" alt="SAS Logo" />
+            <h1>SAS <small>سیستم کنترل دسترسی هوشمند</small></h1>
+        </div>
+        <div class="header-left">
+            <span class="version-badge">نسخه ۱.۰</span>
+            <a href="https://github.com/mohammadnjt/sas" target="_blank" class="gh-link">
+                <span>🔗</span> گیت‌هاب
+            </a>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="intro">معرفی</button>
+        <button class="tab-btn" data-tab="setup">راه‌اندازی</button>
+        <button class="tab-btn" data-tab="api">مستندات API</button>
+        <button class="tab-btn" data-tab="actions">کدهای عملیاتی</button>
+        <button class="tab-btn" data-tab="images" id="imagesTabBtn">تصاویر دستگاه</button>
+        <button class="tab-btn" data-tab="about">درباره</button>
+    </nav>
+
+    <!-- Tab: Intro -->
+    <div id="intro" class="tab-content active">
+        <div class="content-card">
+            <h2>🛡️ درباره سیستم SAS</h2>
+            <p>
+                <strong>SAS</strong> یک پلتفرم کنترل تردد هوشمند است که به‌صورت یک <strong>کلاینت فرمان‌پذیر</strong> (Dumb Terminal) طراحی شده و تمام منطق اعتبارسنجی را به سرور اختصاصی شما واگذار می‌کند. این معماری، انعطاف‌پذیری بی‌نظیری در مدیریت دسترسی، گزارش‌گیری و یکپارچه‌سازی با سیستم‌های موجود فراهم می‌کند.
+            </p>
+
+            <h3>✨ قابلیت‌های کلیدی</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <span class="icon">📡</span>
+                    <h4>اتصال بی‌سیم</h4>
+                    <p>پشتیبانی از Wi-Fi و حالت هات‌اسپات برای پیکربندی آسان در هر محیطی</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">💳</span>
+                    <h4>خواننده NFC</h4>
+                    <p>اسکن کارت‌های RFID با قابلیت تشخیص سریع و ارسال لحظه‌ای به سرور</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">⏳</span>
+                    <h4>حالت آفلاین</h4>
+                    <p>ذخیره‌سازی لاگ‌ها در حافظه داخلی و ارسال خودکار هنگام بازگشت اتصال</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🔐</span>
+                    <h4>امنیت رمزنگاری</h4>
+                    <p>استفاده از هدر امضاشده (X-Auth-Token) برای جلوگیری از جعل و حملات تکراری</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🌐</span>
+                    <h4>وب‌پنل پیکربندی</h4>
+                    <p>تنظیمات شبکه، آدرس سرور، گواهینامه SSL و زمان از طریق رابط کاربری ساده</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🧩</span>
+                    <h4>API یکپارچه</h4>
+                    <p>ارسال تمام درخواست‌ها با پارامتر op و پاسخ JSON استاندارد برای کنترل سخت‌افزار</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">⚙️</span>
+                    <h4>کد عملیاتی کاملاً آزاد</h4>
+                    <p>معنای هر کد عملیاتی از پیش تعیین نشده؛ شما تعریف می‌کنید هر کد چه واکنشی داشته باشد</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🖥️</span>
+                    <h4>متن LCD قابل تنظیم</h4>
+                    <p>پیام نمایشی روی صفحه LCD (حداکثر ۱۶ کاراکتر انگلیسی) توسط سرور تعیین می‌شود</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 12px;">
+                این سیستم برای استفاده در سازمان‌ها، ادارات، کارخانجات و هر محیطی که نیاز به مدیریت تردد امن و هوشمند دارد، طراحی شده است.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tab: Setup -->
+    <div id="setup" class="tab-content">
+        <div class="content-card">
+            <h2>🚀 راهنمای راه‌اندازی و اتصال</h2>
+            <ol>
+                <li>
+                    <strong>روشن کردن دستگاه:</strong>
+                    پس از اتصال به منبع تغذیه، دستگاه روشن شده و آماده به کار می‌شود.
+                </li>
+                <li>
+                    <strong>حالت هات‌اسپات (AP Mode):</strong>
+                    در اولین راه‌اندازی یا در صورت عدم اتصال به شبکه قبلی، دستگاه یک شبکه Wi-Fi با مشخصات زیر ایجاد می‌کند:
+                    <ul>
+                        <li><strong>نام شبکه (SSID):</strong> <code>SAS-Setup</code></li>
+                        <li><strong>رمز عبور:</strong> <code>12345678</code></li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>ورود به پنل تنظیمات:</strong>
+                    پس از اتصال به این شبکه، مرورگر را باز کرده و آدرس زیر را وارد کنید:
+                    <br />
+                    🌐 <code>http://192.168.4.1:9000</code>
+                </li>
+                <li>
+                    <strong>پیکربندی شبکه و سرور:</strong>
+                    در منوی <code>System Config</code> اطلاعات Wi-Fi (SSID و رمز عبور) و همچنین <strong>آدرس سرور</strong> اختصاصی خود را وارد کنید. پس از ذخیره، دستگاه به سرور شما متصل می‌شود.
+                </li>
+            </ol>
+            <div class="highlight-box">
+                <strong>💡 نکته:</strong> پس از پیکربندی موفق، دستگاه به‌طور خودکار به شبکه شما متصل شده و آماده دریافت درخواست‌های اسکن کارت است.
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: API -->
+    <div id="api" class="tab-content">
+        <div class="content-card">
+            <h2>📚 مستندات API سرور پشتیبان</h2>
+
+            <h3>🔐 ۱. امنیت و احراز هویت</h3>
+            <p>
+                تمام درخواست‌های ارسالی از سخت‌افزار به سرور، با استفاده از یک هدر امنیتی امضا می‌شوند تا از نفوذ و جعل جلوگیری شود.
+            </p>
+            <ul>
+                <li>دستگاه در هر درخواست، هدر <code>X-Auth-Token</code> را ارسال می‌کند.</li>
+                <li>
+                    <strong>فرمول ساخت توکن:</strong>
+                    <br />
+                    <code>X-Auth-Token = SHA256(ADMIN_API_KEY + device_virtual_id + unix_timestamp)</code>
+                </li>
+                <li>
+                    <strong>نکته توسعه‌دهنده:</strong> سرور باید در هر درخواست این هدر را دریافت و اعتبارسنجی کند. متغیر <code>unix_timestamp</code> برای جلوگیری از حملات Replay در نظر گرفته شده است.
+                </li>
+            </ul>
+
+            <h3>📡 ۲. مسیر ارتباطی یکپارچه</h3>
+            <p>
+                تمام درخواست‌ها به روت سرور شما با استفاده از پارامتر <code>op</code> ارسال می‌شوند.
+            </p>
+
+            <h4>🔹 حالت آنلاین (اسکن بی‌درنگ)</h4>
+            <p>هنگام قرار گرفتن کارت روی دستگاه، درخواست زیر ارسال می‌شود:</p>
+            <pre><code>GET {SERVER_URL}/?op=nfc&uid={UID}</code></pre>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>پارامتر</th><th>نوع</th><th>توضیحات</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>op</code></td>
+                            <td>رشته</td>
+                            <td>نوع عملیات درخواستی. برای رویداد اسکن کارت همیشه برابر <code>nfc</code> است.</td>
+                        </tr>
+                        <tr>
+                            <td><code>uid</code></td>
+                            <td>رشته</td>
+                            <td>آدرس MAC کارت اسکن‌شده (مثال: <code>59:EB:65:79</code>)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>⏳ حالت آفلاین (همگام‌سازی با تأخیر)</h4>
+            <p>
+                در صورت قطعی شبکه، رویدادهای اسکن در حافظه داخلی صف‌بندی می‌شوند. پس از بازگشت اتصال، هر ۱۰ دقیقه یکبار تلاش می‌شود تا رویدادهای صف، یکی‌یکی به سرور ارسال شوند:
+            </p>
+            <pre><code>GET {SERVER_URL}/?op=nfc&uid={UID}&log_date={DATE}&log_time={TIME}&is_offline=1</code></pre>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>پارامتر</th><th>نوع</th><th>توضیحات</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>log_date</code></td>
+                            <td>رشته</td>
+                            <td>تاریخ دقیق لحظهٔ اسکن کارت، نه لحظهٔ ارسال (مثال: <code>1405/03/30</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>log_time</code></td>
+                            <td>رشته</td>
+                            <td>زمان دقیق لحظهٔ اسکن کارت (مثال: <code>14:35</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>is_offline</code></td>
+                            <td>عدد صحیح</td>
+                            <td>همیشه <code>1</code>. نشان‌دهندهٔ یک رویداد ثبت‌شدهٔ گذشته است، نه یک رویداد بی‌درنگ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box">
+                <strong>⚠️ نکته مهم:</strong> وقتی سرور پارامتر <code>is_offline=1</code> را دریافت می‌کند، فقط باید داده را در دیتابیس ثبت کند و نیازی به اعتبارسنجی بی‌درنگ نیست، چون شخص قبلاً محل را ترک کرده است. پاسخ سرور به این درخواست توسط دستگاه نادیده گرفته می‌شود و روی رله، LED، بیزر یا LCD تأثیری ندارد.
+            </div>
+
+            <h3>📥 ۳. پاسخ موردانتظار سرور</h3>
+            <p>
+                در پاسخ به درخواست آنلاین، سرور باید با وضعیت <code>HTTP 200 OK</code> و یک محموله JSON پاسخ دهد. این محموله نحوه واکنش سخت‌افزار را مشخص می‌کند:
+            </p>
+            <pre><code>{
+  "status": "OK",
+  "uid": "47:35:35:02",
+  "action": "1101",
+  "lcd_text": "Welcome Boss",
+  "date": "1405/03/28",
+  "time": "2026-06-18T15:09:41Z"
+}</code></pre>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>کلید</th><th>نوع / مقادیر</th><th>توضیح</th><th>اجباری</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>status</code></td>
+                            <td><code>OK</code> | <code>ERROR</code></td>
+                            <td>وضعیت کلی پردازش درخواست در سرور. برای مشخص کردن رفتار سخت‌افزار استفاده نمی‌شود؛ فقط جنبهٔ اطلاع‌رسانی/لاگ دارد.</td>
+                            <td>بله</td>
+                        </tr>
+                        <tr>
+                            <td><code>uid</code></td>
+                            <td>رشته</td>
+                            <td>بازتاب همان UID دریافتی، برای تطبیق درخواست و پاسخ در لاگ‌های سرور و دستگاه.</td>
+                            <td>بله</td>
+                        </tr>
+                        <tr>
+                            <td><code>action</code></td>
+                            <td>رشتهٔ ۴ کاراکتری باینری</td>
+                            <td>کد عملیاتی که دقیقاً مشخص می‌کند چه خروجی‌هایی روی سخت‌افزار فعال شوند (به تب «کدهای عملیاتی» مراجعه کنید).</td>
+                            <td>بله</td>
+                        </tr>
+                        <tr>
+                            <td><code>lcd_text</code></td>
+                            <td>رشته (انگلیسی، حداکثر ۱۶ کاراکتر)</td>
+                            <td>متنی که روی نمایشگر LCD چاپ می‌شود.</td>
+                            <td>خیر</td>
+                        </tr>
+                        <tr>
+                            <td><code>date</code></td>
+                            <td>رشته</td>
+                            <td>تاریخ شمسی جاری از دید سرور، برای همگام‌سازی نمایشگر دستگاه.</td>
+                            <td>خیر</td>
+                        </tr>
+                        <tr>
+                            <td><code>time</code></td>
+                            <td>رشته (ISO 8601)</td>
+                            <td>زمان جاری از دید سرور، برای همگام‌سازی ساعت دستگاه در صورت فعال بودن Auto Sync.</td>
+                            <td>خیر</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box warn">
+                <strong>اگر <code>lcd_text</code> ارسال نشود:</strong> نمایشگر پیام پیش‌فرض داخلی دستگاه را نشان می‌دهد؛ متن نمایشی کاملاً به تصمیم سرور بستگی دارد و هیچ مقدار ثابتی از سمت دستگاه تحمیل نمی‌شود.
+            </div>
+
+            <h3>❌ ۴. مدیریت خطا</h3>
+            <p>برای اینکه یکپارچه‌سازی قابل‌اتکا باشد، دستگاه در سناریوهای زیر رفتار پیش‌فرض امن را اجرا می‌کند:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>سناریو</th><th>رفتار دستگاه</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>عدم پاسخ سرور در بازهٔ Timeout</td>
+                            <td>اجرای کد عملیاتی پیش‌فرض امن (<code>0110</code>)</td>
+                        </tr>
+                        <tr>
+                            <td>پاسخ با کد HTTP غیر از ۲۰۰</td>
+                            <td>اجرای کد عملیاتی پیش‌فرض امن (<code>0110</code>)</td>
+                        </tr>
+                        <tr>
+                            <td>بدنهٔ پاسخ JSON نامعتبر یا فاقد فیلد <code>action</code></td>
+                            <td>اجرای کد عملیاتی پیش‌فرض امن (<code>0110</code>)</td>
+                        </tr>
+                        <tr>
+                            <td>عدم دسترسی دستگاه به شبکه</td>
+                            <td>ورود خودکار به حالت آفلاین (به بخش ۲ مراجعه کنید)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Actions (اصلاح شده مطابق درخواست) -->
+    <div id="actions" class="tab-content">
+        <div class="content-card">
+            <h2>⚙️ کدهای عملکردی سخت‌افزار (Action Codes)</h2>
+            <p>
+                کلید <code>action</code> در پاسخ JSON، یک رشتهٔ ۴ بیتی است که به‌ترتیب وضعیت خروجی‌های زیر را کنترل می‌کند: <strong>[رله] [بیزر] [LED قرمز] [LED سبز]</strong>. هر بیت مستقل از بیت‌های دیگر است؛ یعنی <code>1</code> به معنی «فعال» و <code>0</code> به معنی «غیرفعال» برای همان خروجی مشخص است.
+            </p>
+
+            <div class="highlight-box warn">
+                <strong>📌 نکتهٔ کلیدی:</strong> این سیستم هیچ جدول ثابتی که بگوید مثلاً «کد <code>1101</code> یعنی مجاز» یا «کد <code>0110</code> یعنی غیرمجاز» را از قبل تحمیل نمی‌کند. معنای هر کد کاملاً به تعریف شما در سرور بستگی دارد. شما می‌توانید برای وضعیتی که در سرور خودتان آن را «غیرمجاز» در نظر می‌گیرید، کد <code>1111</code> (یعنی فعال شدن همهٔ خروجی‌ها از جمله باز شدن رله) ارسال کنید؛ دستگاه صرفاً همان ترکیب بیت‌ها را اجرا می‌کند و دربارهٔ درست یا نادرست بودنش قضاوتی ندارد. به همین دلیل توصیه می‌شود جدول تناظر «وضعیت ⇄ کد» را خودتان در مستندات داخلی سرورتان تعریف و ثابت نگه دارید.
+            </div>
+
+            <p>
+                جدول زیر فقط یک <strong>نمونهٔ پیشنهادی</strong> است تا برای شروع کار الگو داشته باشید؛ الزامی به رعایت دقیق آن نیست و می‌توانید هر بخش را مطابق نیاز خودتان تغییر دهید:
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>کد Action</th><th>وضعیت نمونه (پیشنهادی)</th><th>رفتار سخت‌افزاری</th><th>متن lcd_text نمونه</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>1101</code></td>
+                            <td>مجاز (Granted)</td>
+                            <td>رله فعال + بوق تایید + LED سبز</td>
+                            <td><code>"Welcome"</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>0110</code></td>
+                            <td>غیرمجاز (Denied)</td>
+                            <td>رله بسته + بوق هشدار + LED قرمز</td>
+                            <td><code>"Access Denied"</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>0100</code></td>
+                            <td>تکراری (Anti-Passback)</td>
+                            <td>فقط یک بوق کوتاه هشدار</td>
+                            <td><code>"Duplicate"</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>0000</code></td>
+                            <td>حالت سایه (Ghost)</td>
+                            <td>هیچ واکنشی نشان نمی‌دهد</td>
+                            <td><code>""</code> (خالی)</td>
+                        </tr>
+                        <tr>
+                            <td><code>1111</code></td>
+                            <td>مثال آزاد دیگر</td>
+                            <td>رله + بیزر + هر دو LED روشن، همزمان</td>
+                            <td><code>"Full Active"</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>🖥️ متن نمایشگر (<code>lcd_text</code>)</h3>
+            <p>
+                در کنار کد <code>action</code>، سرور می‌تواند با فیلد <code>lcd_text</code> یک پیام دلخواه برای نمایش روی صفحه LCD ارسال کند. این فیلد کاملاً مستقل از <code>action</code> است؛ یعنی می‌توانید برای هر ترکیب بیتی، هر متنی را که بخواهید نمایش دهید.
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>محدودیت</th><th>توضیح</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>زبان</td>
+                            <td>متن باید حتماً به زبان انگلیسی باشد؛ کاراکترهای غیرانگلیسی (از جمله فارسی) به‌درستی روی نمایشگر نشان داده نمی‌شوند.</td>
+                        </tr>
+                        <tr>
+                            <td>طول</td>
+                            <td>حداکثر <b>۱۶ کاراکتر</b>. متن طولانی‌تر ممکن است بریده یا ناقص نمایش داده شود.</td>
+                        </tr>
+                        <tr>
+                            <td>اختیاری بودن</td>
+                            <td>در صورت عدم ارسال، نمایشگر پیام پیش‌فرض داخلی دستگاه را نشان می‌دهد.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box">
+                <strong>📌 جمع‌بندی:</strong>
+                <ul style="margin-top: 6px; margin-bottom: 0;">
+                    <li>هر بیت از کد <code>action</code> مستقل است و ترکیب دلخواه ۴ بیتی (از <code>0000</code> تا <code>1111</code>) قابل ارسال است.</li>
+                    <li>هیچ تناظر ثابتی بین «وضعیت منطقی» و «کد» در سطح دستگاه وجود ندارد؛ این تناظر را شما در سرور خودتان تعریف می‌کنید.</li>
+                    <li><code>lcd_text</code> اختیاری، حداکثر ۱۶ کاراکتر و صرفاً انگلیسی است و مستقل از <code>action</code> تنظیم می‌شود.</li>
+                    <li>در صورت بروز خطای اتصال یا قطعی سرور (تایم‌اوت / ارور ۵۰۰)، دستگاه به‌طور پیش‌فرض برای حفظ امنیت کد <code>0110</code> را اجرا می‌کند؛ این تنها کدی است که رفتار آن توسط خود دستگاه (نه سرور) تعیین می‌شود.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Images -->
+    <div id="images" class="tab-content">
+        <div class="content-card">
+            <h2>🖼️ تصاویر دستگاه</h2>
+            <div id="galleryContainer" class="gallery-grid">
+                <div class="gallery-empty">در حال بارگذاری...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: About -->
+    <div id="about" class="tab-content">
+        <div class="content-card">
+            <h2>📌 درباره پروژه SAS</h2>
+            <p>
+                <strong>SAS</strong> مخفف <em>Smart Access System</em> است؛ یک راه‌حل متن‌باز برای کنترل تردد هوشمند که با هدف سادگی، امنیت و قابلیت یکپارچه‌سازی بالا طراحی شده است.
+            </p>
+            <ul>
+                <li><strong>معماری:</strong> کلاینت فرمان‌پذیر (دستگاه) + سرور مرکزی (بک‌اند شما)</li>
+                <li><strong>ارتباط:</strong> از طریق Wi-Fi با پروتکل HTTP و رمزنگاری توکن</li>
+                <li><strong>مدیریت:</strong> از طریق وب‌پنل داخلی و یا API سرور</li>
+                <li><strong>منبع باز:</strong> تمام کدها و مستندات در گیت‌هاب در دسترس است</li>
+            </ul>
+            <p style="margin-top: 16px;">
+                🔗 <a href="https://github.com/mohammadnjt/sas" target="_blank" style="color:#0a2a4a; font-weight:600;">مشاهده مخزن در گیت‌هاب</a>
+            </p>
+            <p style="color: #5a7a9a; font-size: 0.9rem; margin-top: 20px;">
+                این پروژه با ❤️ برای جامعه توسعه‌دهندگان و سازمان‌های علاقه‌مند به امنیت فیزیکی هوشمند ساخته شده است.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            <span>📌</span> SAS – مستندات نسخه ۱.۰ &nbsp;•&nbsp;
+            <a href="https://github.com/mohammadnjt/sas" target="_blank">گیت‌هاب پروژه</a>
+        </p>
+        <p style="font-size:0.8rem; margin-top:6px;">
+            آخرین به‌روزرسانی: ۱۴۰۵/۰۵/۲۶
+        </p>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        function activateTab(tabId) {
+            contents.forEach(c => c.classList.remove('active'));
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+            tabs.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        tabs.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const tabId = this.dataset.tab;
+                if (tabId) activateTab(tabId);
+            });
+        });
+
+        // Hash-based routing
+        if (window.location.hash) {
+            const hash = window.location.hash.replace('#', '');
+            const validTabs = ['intro','setup','api','actions','images','about'];
+            if (validTabs.includes(hash)) {
+                activateTab(hash);
+            }
+        }
+    })();
+</script>
+
+<script>
+    /*
+        نمایش تصاویر ثابت 1.png تا 7.png از پوشهٔ /public/img در تب «تصاویر دستگاه».
+        - هر فایل مستقیماً به‌عنوان <img src="..."> بارگذاری می‌شود؛ نیازی به لیستینگ پوشه نیست.
+        - اگر فایلی از این لیست در سرور وجود نداشته باشد، آن آیتم به‌صورت خودکار حذف می‌شود.
+        - اگر هیچ‌کدام از فایل‌ها لود نشوند، پیام «تصویری موجود نیست» نمایش داده می‌شود.
+    */
+    (function () {
+        const IMG_DIR = '/public/img/';
+        const IMAGE_FILENAMES = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png'];
+
+        function renderGallery(imageUrls) {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '';
+
+            imageUrls.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = url.split('/').pop();
+                img.loading = 'lazy';
+
+                img.onerror = function () {
+                    // اگر فایل واقعاً وجود نداشت یا لود نشد، آیتم مربوطه حذف می‌شود
+                    item.remove();
+                    if (!container.children.length) {
+                        container.innerHTML = '<div class="gallery-empty">تصویری موجود نیست</div>';
+                    }
+                };
+
+                const caption = document.createElement('div');
+                caption.className = 'caption';
+                caption.textContent = url.split('/').pop();
+
+                item.appendChild(img);
+                item.appendChild(caption);
+                container.appendChild(item);
+            });
+        }
+
+        const imageUrls = IMAGE_FILENAMES.map(name => IMG_DIR + name);
+        renderGallery(imageUrls);
+    })();
+</script>
+
+</body>
+</html>
