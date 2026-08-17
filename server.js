@@ -66,6 +66,10 @@ app.get('/panel', (req, res) => {
     res.sendFile(path.join(publicDir, 'panel.html'));
 });
 
+app.get('/docs', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 app.post('/api/test-mode', (req, res) => {
     testMode.active = true;
     testMode.action = req.body.action;
