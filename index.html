@@ -666,10 +666,103 @@
                     </tbody>
                 </table>
             </div>
+            <h3>📜 ۵. دریافت لاگ‌ها از دستگاه</h3>
+            <p>
+                علاوه بر ارسال لاگ‌های آنلاین و آفلاین به سرور، بک‌اند شما (یا هر کلاینتی مانند Postman) می‌تواند مستقیماً از خود دستگاه، لاگ‌های ذخیره‌شده را درخواست کند. این کار از طریق روت <code>/logs</code> روی دستگاه انجام می‌شود.
+            </p>
+
+            <h4>ساختار درخواست</h4>
+            <ul>
+                <li><strong>نوع درخواست (Method):</strong> <code>GET</code></li>
+                <li><strong>آدرس (URL):</strong> <code>http://&lt;IP_ADDRESS&gt;:&lt;PORT&gt;/logs</code> (مثلاً <code>http://192.168.1.50:9000/logs</code>)</li>
+            </ul>
+
+            <h4>پارامترهای مورد نیاز (Query Params)</h4>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>پارامتر</th><th>اجباری</th><th>مقدار پیش‌فرض</th><th>توضیحات</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>key</code></td>
+                            <td>بله</td>
+                            <td>—</td>
+                            <td>همان <code>ADMIN_API_KEY</code> دستگاه (مثلاً <code>admin123</code>). اگر ارسال نشود یا اشتباه باشد، سرور به‌جای JSON، صفحهٔ HTML ورود را نشان می‌دهد یا کاربر را ریدایرکت می‌کند.</td>
+                        </tr>
+                        <tr>
+                            <td><code>page</code></td>
+                            <td>خیر</td>
+                            <td><code>1</code></td>
+                            <td>شماره صفحه برای صفحه‌بندی نتایج.</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>خیر</td>
+                            <td><code>100</code></td>
+                            <td>تعداد لاگ‌های درخواستی در هر صفحه.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>نمونه استفاده در Postman</h4>
+            <p>نمونهٔ URL نهایی که Postman با پارامترهای بالا می‌سازد:</p>
+            <pre><code>http://192.168.1.50:9000/logs?key=admin123&page=1&limit=50</code></pre>
+
+            <h4>نمونه پاسخ دستگاه</h4>
+            <p>در صورت صحت اطلاعات، دستگاه یک پاسخ JSON شامل اطلاعات صفحه‌بندی و آرایه‌ای از لاگ‌ها برمی‌گرداند:</p>
+            <pre><code>{
+  "total": 342,
+  "page": 1,
+  "limit": 50,
+  "logs": [
+    {
+      "uid": "59:EB:65:79",
+      "date": "1405/03/28",
+      "time": "15:09:41",
+      "action": "1101",
+      "is_offline": 0
+    }
+  ]
+}</code></pre>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>کلید</th><th>توضیح</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>total</code></td>
+                            <td>تعداد کل لاگ‌های ذخیره‌شده روی دستگاه (صرف‌نظر از صفحه‌بندی).</td>
+                        </tr>
+                        <tr>
+                            <td><code>page</code></td>
+                            <td>شماره صفحهٔ فعلی، مطابق همان مقداری که در درخواست ارسال شده (یا مقدار پیش‌فرض).</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>تعداد لاگ در هر صفحه، مطابق همان مقداری که در درخواست ارسال شده (یا مقدار پیش‌فرض).</td>
+                        </tr>
+                        <tr>
+                            <td><code>logs</code></td>
+                            <td>آرایه‌ای از رویدادهای اسکن کارت، هرکدام شامل UID کارت، تاریخ/زمان اسکن، کد عملیاتی اجراشده و مشخص‌کنندهٔ آنلاین/آفلاین بودن رویداد.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box warn">
+                <strong>⚠️ نکتهٔ امنیتی:</strong> از آن‌جا که پارامتر <code>key</code> در URL و به‌صورت متن ساده (query string) ارسال می‌شود، توصیه می‌شود این روت فقط از داخل شبکهٔ محلی (LAN) یا از طریق HTTPS در دسترس باشد تا کلید ادمین در مسیر شبکه قابل استراق سمع نباشد.
+            </div>
+
+            <div class="highlight-box">
+                <strong>🛡️ محافظت در برابر حملات Brute-force:</strong> دسترسی به روت <code>/logs</code> و همچنین صفحهٔ لاگین وب‌پنل، در برابر حملات حدس رمز عبور (Brute-force) ایزوله و محافظت‌شده است. تلاش‌های پیاپی و نامعتبر برای ورود کلید یا رمز عبور، شناسایی و مسدود می‌شوند؛ به این ترتیب امکان حدس خودکار <code>ADMIN_API_KEY</code> یا رمز عبور پنل با ارسال انبوه درخواست عملاً وجود ندارد.
+            </div>
+
         </div>
     </div>
-
-    <!-- Tab: Actions (اصلاح شده مطابق درخواست) -->
     <div id="actions" class="tab-content">
         <div class="content-card">
             <h2>⚙️ کدهای عملکردی سخت‌افزار (Action Codes)</h2>
